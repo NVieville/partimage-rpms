@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pt" lang="pt"><head>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"><title>How to Backup Partitions</title>
+
+<!--=========================================================================-->
+<A NAME=srcd></A>
+<HR>
+<h3>SystemRescueCd and Partimage</h3>
+<p> <a href="http://www.sysresccd.org/Main_Page">System Rescue CD</a> 
+is a live distribution with several tools for repairing file systems. 
+It can be used through a <a href="http://www.sysresccd.org/Online-Manual-EN">CD-Rom</a>,
+a pen-drive, or a floppy. 
+In the case of a pendrive,
+boot from a USB device must be <b>on</b> in the 
+<a href="http://en.wikipedia.org/wiki/BIOS">BIOS</a>. Furthermore, in some mobos,
+it is necessary to access the BIOS with the pendrive plugged in, select the tab <b>Boot ->
+Hard Disk Drives</b>, and set the pendrive to be the <b>1st drive</b>. In any case,
+the pendrive must be made <a href="http://linux.web.psi.ch/livecd/usbdisk.html">bootable</a>.
+</p><p>
+During the boot, SystemRescueCd detects the hardware and allows the choice of
+the keyboard type. If the computer is on a network, just type <br>
+<b>net-setup eth0</b> from the command-line,
+and configure the network.
+<p></p>
+For creating partitions, <b>run_qtparted</b> used to start 
+<a href="http://qtparted.sourceforge.net/">QtParted</a>.
+Newer versions, however, are shipping <a href="http://gparted.sourceforge.net">gparted</a>, instead. 
+In this case, <b>xinit</b> has to be run before calling gparted, because
+it only works in graphical mode.
+It is possible then to delete, create, or format partitions. It is never too much
+to remind people to <u>backup</u> important data before any attempt to modify partitions.
+There is always the risk of messing the 
+<a href="http://ata-atapi.com/hiwtab.html">partition table</a>, 
+although, in general, this does not happen.
+<p></p>
+<a href="http://www.partimage.org/Partimage-manual">Partimage</a>
+can be used for backing up a partition, and its usage is straightforward. 
+Just highlight the partition to be saved, choose a name for its backup,
+and optionally another machine on the network, running a partimage server,
+to receive the image. In the server, the file <b>/etc/sysconfig/partimaged</b>
+should contain options like this:
+</p><p>
+OPTIONS="--port=4025 --dest /your_image_dir/images"
+</p><p>
+The client must always be run as <b>root</b>, and it can optionally use a password
+for accessing the server. 
+However, the client must have been compiled with "login" enabled, in this case. 
+In fact, the client compilation options, and the server options, must match,
+e.g., ssl and login. Otherwise, a "version mismatch" error occurs. 
+
+Should your client use "login", the users allowed to connect to the server must
+be listed in the file <b>/etc/partimaged/partimagedusers</b>, one per line.
+If, besides using login, pam support is also enabled, the authentication
+is done based on a db4 database created by the script 
+<b>/usr/share/partimaged/partimaged-passwd</b>. The database entries
+are pairs of (user,password). Please, read <b>man partimaged-passwd</b> for
+getting all the options on how to add/delete users from the database.
+
+</p><p>
+For using the ssl capability, the certificates have to be created by running
+<b>/usr/share/partimaged/create_certificates.sh</b>. The file 
+<b>/etc/partimaged/partimage-certs.cnf</b> can be customized, in order to change
+information, such as, Country, State and Location.
+Clients supplied with SystemRescueCd, version 1.3.1 or greater, ARE compiled with 
+ssl and login enabled. Therefore, the partimage package was created with the same 
+options also enabled.
+Please, note that, for disabling ssl in the server, it is enough to add 
+the option <b>--nossl</b> to its configuration file, and <u>restart</u> the server.
+To check which compilation options have been chosen, just type <b>partimaged -i</b>.
+
+</p><p>
+Another point is that the client and server architectures must be the same.
+Therefore, if you use a CD with a 32 bit client, the server must be 
+a 32 bit version too, even if it is running on a 64 bit platform. 
+
+</p><p>
+The backup files should be named using mnemonics easy to remember, such as,
+boot-hostname-Fx or root-hostname-Fx. There is also an option to break
+the image in parts, so they fit on a CD. Generally, 690MB is a good choice, 
+which will produce root-hostname-Fx.000, root-hostname-Fx.001, etc...
+If you do not want to save the image on another computer, 
+then just mount another partition on the same computer to receive the image.
+</p><p>
+To restore a backup, just do the reverse, highlight the partition to be restored, 
+and type the name of the first file of the backup: <b>root-hostname-Fx.000</b>.
+<p></p>
+Remember that the size of the partition to be restored must be 
+<u>greater or equal</u> than the size of the saved partition. 
+If it is greater, then the corresponding file system
+should be enlarged to occupy all of the available space. For an 
+<a href="http://www.redhat.com/docs/manuals/linux/RHL-8.0-Manual/custom-guide/ch-ext3.html">ext3</a>
+file system, use:
+<p></p>
+<b>e2fsck</b> -f /dev/sdan <br>
+<b>resize2fs</b> -f /dev/sdan  
+<p></p>
+The enlargement of the size of the file system can be done at any time later, 
+and it is not mandatory (but the excess is lost, otherwise).
+</p>
+</body></html>
