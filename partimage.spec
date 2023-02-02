@@ -14,9 +14,9 @@
 %{!?git_post_release_enabled: %global git_post_release_enabled 0}
 %if 0%{?git_post_release_enabled}
   # Git commit is needed for post-release version.
-  %global gitcommit ad6fe66f0cd9e40960337679069bd7b921830840
+  %global gitcommit 98d50f0ffc2826353f3d37354ddf1906163ec48d
   %global gitshortcommit %(c=%{gitcommit}; echo ${c:0:7})
-  %global gitsnapinfo .20181029git%{gitshortcommit}
+  %global gitsnapinfo .20230102git%{gitshortcommit}
 %endif
 
 Summary:          Partition imaging utility, much like Ghost
@@ -75,7 +75,7 @@ and supporting the following filesystems:
 %package server
 Summary: Server daemon for remote imaging, much like Ghost
 Group: System Environment/Daemons
-%{?with_pam:Requires: db4-utils}
+%{?with_pam:Requires: pam}
 
 %description server
 Partimage is a Linux/UNIX partition imaging utility,
@@ -256,8 +256,8 @@ exit 0
 %dir %{image_place}
 
 %changelog
-* Thu Oct 11 2018 Nicolas Viéville <nicolas.vieville@uphf.fr> - 0.6.10_beta1-1
-- Fixes for Fedora 28
+* Thu Feb 02 2023 Nicolas Viéville <nicolas.vieville@uphf.fr> - 0.6.10_beta1-1
+- Fixes for Fedora 37
 - Rewoked spec file
 
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 0.6.9-12
