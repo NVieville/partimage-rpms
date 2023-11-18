@@ -14,16 +14,16 @@
 %{!?git_post_release_enabled: %global git_post_release_enabled 0}
 %if 0%{?git_post_release_enabled}
   # Git commit is needed for post-release version.
-  %global gitcommit 98d50f0ffc2826353f3d37354ddf1906163ec48d
+  %global gitcommit d38be821491c8b4d3eac829d2e53984f4eb8bba7
   %global gitshortcommit %(c=%{gitcommit}; echo ${c:0:7})
-  %global gitsnapinfo .20230102git%{gitshortcommit}
+  %global gitsnapinfo .20231118git%{gitshortcommit}
 %endif
 
 Summary:          Partition imaging utility, much like Ghost
 Name:             partimage
 Version:          0.6.10_beta1
 Release:          1%{?gitsnapinfo}%{?dist}
-License:          GPLv2+
+License:          GPL-1.0-only AND GPL-2.0-only AND GPL-2.0-or-later AND GFDL-1.1-or-later
 Group:            Applications/System
 URL:              http://www.partimage.org/
 # Old stable release
@@ -256,9 +256,11 @@ exit 0
 %dir %{image_place}
 
 %changelog
-* Thu Feb 02 2023 Nicolas Viéville <nicolas.vieville@uphf.fr> - 0.6.10_beta1-1
-- Fixes for Fedora 37
+* Sat Nov 18 2023 Nicolas Viéville <nicolas.vieville@uphf.fr> - 0.6.10_beta1-1
+- Fixes for Fedora 37 - remove requires db4-utils - add requires pam
 - Rewoked spec file
+- migrated to SPDX license
+- Fixes for Fedora 39 - GCC Warnings
 
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 0.6.9-12
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
